@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+pip-wheel-metadata/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local secrets / machine config
+.env
+.env.*
+!.env.example
+*.local
+config.local.py
+
+# Temporary / incomplete files
+tmp/
+temp/
+*.crdownload
+
+# Very large raw oscilloscope/vendor captures
+*.bin
+*.trc
+*.wfm
+
+
+# Keep generated cache folders out, but allow curated outputs
+outputs_tmp/
+outputs_cache/
+
+# Do NOT ignore proof CSV/JSON/PNG by default.
+# This repo needs evidence files committed or released.

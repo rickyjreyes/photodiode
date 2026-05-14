@@ -1,0 +1,6 @@
+scope=Siglent Technologies,SDS1104X HD,SDSEV82D7R0087,5.5.6.1.1.0.2
+channel=C3
+sample_rate=20000.0
+vscale=3.0
+offset=3.0
+samples=10000
