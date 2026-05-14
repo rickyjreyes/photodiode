@@ -1,0 +1,49 @@
+{
+  "input": "captures/20260309_010802/waveform_raw.npy",
+  "real_scan_max_delta_chi2": 21.139082908985245,
+  "nperm_per_method": 1000,
+  "mains_hz": 60.0,
+  "p_values": {
+    "amplitude_shuffle": 0.003996003996003996,
+    "cycle_sync_block": 0.9460539460539461,
+    "half_cycle_sync_block": 0.9340659340659341
+  },
+  "diagnostics": {
+    "amplitude_shuffle": {
+      "role": "primary_scanmax_null"
+    },
+    "cycle_sync_block": {
+      "role": "stress_test_not_primary_pvalue",
+      "block_meta": {
+        "n_blocks": 31,
+        "mean_block_len": 322.5806451612903,
+        "min_block_len": 104,
+        "max_block_len": 334,
+        "half_cycle": false,
+        "phase_delta": 1.955563473862478
+      },
+      "median_high_frequency_leakage_ratio": 0.9771183240418522,
+      "mean_high_frequency_leakage_ratio": 0.9764206292199683,
+      "note": "Cycle/block shuffles may alter harmonic coherence or inject leakage; high p is inconclusive, not erasure of measured ratios."
+    },
+    "half_cycle_sync_block": {
+      "role": "stress_test_not_primary_pvalue",
+      "block_meta": {
+        "n_blocks": 61,
+        "mean_block_len": 163.9344262295082,
+        "min_block_len": 63,
+        "max_block_len": 167,
+        "half_cycle": true,
+        "phase_delta": 1.955563473862478
+      },
+      "median_high_frequency_leakage_ratio": 0.991222257047635,
+      "mean_high_frequency_leakage_ratio": 0.9909069930877576,
+      "note": "Cycle/block shuffles may alter harmonic coherence or inject leakage; high p is inconclusive, not erasure of measured ratios."
+    }
+  },
+  "interpretation": {
+    "primary_claim": "Use amplitude_shuffle as the primary log-spectrum scan-max null.",
+    "stress_tests": "Cycle-sync block tests assess dependence on periodic block structure; they are not automatic rejection tests for measured harmonic ratios.",
+    "important": "Exact 2/3 pairs and Koide-style triplets are direct frequency-ratio outputs and are not invalidated by block-shuffle stress p-values."
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "n_files": 2,
+  "parameters": {
+    "fmin": 20.0,
+    "fmax": 1000.0,
+    "kmin": 0.5,
+    "kmax": 80.0,
+    "nk": 4000,
+    "nperm": 500,
+    "seed": 42,
+    "peak_height_frac": 0.05
+  },
+  "rows": [
+    {
+      "n_peaks": 0,
+      "peak_freqs_Hz": "",
+      "exact_2_3_pairs": 0,
+      "exact_koide_triplets": 0,
+      "best_delta_chi2": 140.573,
+      "best_k": 2.15,
+      "p_shuffle_scanmax": 0.001996,
+      "null_n": 500,
+      "samples": 5001,
+      "sample_rate_Hz": 20000.0,
+      "duration_s": 0.25,
+      "id": "001",
+      "filename": "fft.npy"
+    },
+    {
+      "n_peaks": 8,
+      "peak_freqs_Hz": "60,120,180,240,300,360,480,600",
+      "exact_2_3_pairs": 2,
+      "exact_koide_triplets": 2,
+      "best_delta_chi2": 21.1391,
+      "best_k": 44.5341,
+      "p_shuffle_scanmax": 0.005988,
+      "null_n": 500,
+      "samples": 10000,
+      "sample_rate_Hz": 20000.0,
+      "duration_s": 0.5,
+      "id": "002",
+      "filename": "waveform_raw.npy"
+    }
+  ]
+}

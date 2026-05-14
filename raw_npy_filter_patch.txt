@@ -1,0 +1,39 @@
+Patch for compare_captures.py, batch_analyze.py, and persistence_scan.py:
+
+Add this helper near the top of each script:
+
+DERIVED_NPY_NAMES = {
+    "fft.npy", "spectrum.npy", "freq.npy", "frequency.npy", "frequencies.npy",
+    "amps.npy", "amplitude.npy", "amplitudes.npy",
+}
+
+def is_raw_waveform_candidate(path: Path, include_derived: bool = False) -> bool:
+    if path.suffix.lower() != ".npy":
+        return False
+    if include_derived:
+        return True
+    name = path.name.lower()
+    stem = path.stem.lower()
+    if name in DERIVED_NPY_NAMES:
+        return False
+    if "fft" in stem and "waveform" not in stem:
+        return False
+    if "spectrum" in stem and "waveform" not in stem:
+        return False
+    return True
+
+Then, wherever the script collects files with rglob("*.npy"), filter with:
+
+files = []
+for p in sorted(input_dir.rglob("*.npy")):
+    if is_raw_waveform_candidate(p, include_derived=args.include_derived):
+        files.append(p)
+    else:
+        print(f"[skip] derived/non-waveform .npy: {p}")
+
+Also add this argparse option:
+
+ap.add_argument("--include-derived", action="store_true",
+                help="Allow files like fft.npy. Normally leave this OFF.")
+
+This prevents fft.npy from being analyzed as if it were a raw waveform.

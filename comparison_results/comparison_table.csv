@@ -1,0 +1,3 @@
+label,file,n_peaks,exact_2_3_pairs,exact_koide_triplets,best_delta_chi2,best_k,p_shuffle_scanmax,null_n,samples,sample_rate_Hz,duration_s
+fft,captures\20260309_010802\fft.npy,0,0,0,140.573,2.15,0.001996,500,5001,20000.0,0.25005
+waveform_raw,captures\20260309_010802\waveform_raw.npy,8,2,2,21.1391,44.5341,0.005988,500,10000,20000.0,0.5
