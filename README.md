@@ -1,113 +1,73 @@
-# Photodiode State Induction
+# Optically Induced Harmonic State in a Silicon Photodiode
 
-Prediction ledger, oscilloscope captures, and reproducible spectral analysis for an optically induced long-lived harmonic state in a silicon photodiode.
+**Reproducible artifact package — prediction ledger, oscilloscope captures, FFT analysis, Q = 2/3 sideband geometry, and log-cos spectral scan with shuffle null.**
+
+---
 
 ## Overview
 
-This repository contains a reproducible artifact package for testing whether a brief optical excitation protocol can induce a persistent harmonic electrical state in a standard silicon photodiode.
+This repository is a self-contained reproducibility package for a captured electrical waveform from a silicon photodiode following a brief optical excitation protocol.
 
-The central claim is not that a photodiode detects light. Photodiodes do that conventionally.
+The central measured fact is this: the post-excitation waveform contains a discrete 60 Hz-spaced harmonic ladder with exact Q = 2/3 ratio geometry across two independent triplets, and the log-frequency spectrum carries statistically significant cosine modulation (Δχ² = 21.139, p\_shuffle\_scanmax = 0.000999 over 1000 null trials).
 
-The claim tested here is stronger:
+All scripts are executable. All outputs are committed. The prediction ledger records what was expected before the capture.
 
-> A short optical excitation protocol may drive a silicon photodiode into a long-lived structured electrical state whose later oscilloscope readout contains discrete harmonic structure, exact ratio locks, and statistically significant log-frequency modulation.
+---
 
-The repository includes:
+## Repository Contents
 
-- A prediction and protocol ledger.
-- Siglent oscilloscope capture scripts.
-- Raw or curated waveform artifacts.
-- FFT spectral outputs.
-- Ratio-pair analysis.
-- Koide-style `Q = 2/3` triplet analysis.
-- Log-cos scans in `ell = ln(f)`.
-- Shuffle/null test outputs.
+```
+README.md                    — this file
+proof_ledger.json            — pre-declared protocol and prediction record
+scan_npy_logcos.py           — main analysis script (FFT → ratio → Koide → log-cos)
+siglent.py / siglent_2.py    — oscilloscope capture scripts (Siglent SDS1104X HD)
+siglent_proof.py             — capture + analysis pipeline
+photodiode_proof.py          — induction protocol driver
 
-## Key Result
+captures/
+  20260309_010802/
+    waveform_raw.npy         — primary artifact waveform
 
-A captured waveform artifact shows a structured harmonic ladder with peaks at:
-
-```text
-60 Hz
-120 Hz
-180 Hz
-240 Hz
-300 Hz
-360 Hz
-480 Hz
-600 Hz
+csv/                         — raw spectral run CSVs and combined harmonic summaries
+proof_runs/                  — baseline and post-excitation FFT figures and peak CSVs
+proof/                       — annotated spectral figures
+outputs_npy_logcos/          — canonical analysis outputs (see below)
+control/                     — control run data
+pic/                         — device and setup photographs
 ```
 
-The artifact contains exact `2/3` frequency-ratio locks:
+### Canonical Analysis Outputs (`outputs_npy_logcos/`)
 
-```text
-120 / 180 = 2/3
-240 / 360 = 2/3
-```
+| File | Contents |
+|---|---|
+| `summary.json` | All scalar results: peaks, ratio pairs, Koide triplets, log-cos best fit |
+| `top_peaks.csv` | Detected FFT peaks with frequency and amplitude |
+| `ratio_pairs.csv` | All detected peak pairs with ratio and δ from 2/3 |
+| `koide_triplets.csv` | All ordered triplets with Q\_low, Q\_high, Q\_mean, koide\_error |
+| `logcos_scan.csv` | Δχ² vs. k across the full scan range |
+| `logcos_null.csv` | Shuffle null distribution (1000 trials, scan-max statistic) |
+| `spectrum.png` | FFT amplitude spectrum |
+| `logcos_scan.png` | Δχ² scan across k |
+| `logcos_best_fit.png` | Best-fit log-cos overlay on log-frequency spectrum |
+| `waveform.png` | Raw time-domain waveform |
 
-It also contains exact Koide-style sideband triplets:
+---
 
-```text
-(120, 180, 240)
-(240, 360, 480)
-```
+## Primary Artifact
 
-For these triplets:
+**Device:** Siglent Technologies SDS1104X HD  
+**Channel:** C3  
+**Capture date:** 2026-03-09  
+**Sample rate:** 20 000 Hz  
+**Samples:** 10 000  
+**Duration:** 0.5 s  
+**Vertical scale:** 3.0 V/div, offset 3.0 V
 
-```text
-Q_low  = f1 / f2      = 2/3
-Q_high = f3 / (2*f2) = 2/3
-Q_mean = 2/3
-```
+The raw waveform is stored as `captures/20260309_010802/waveform_raw.npy`.
 
-with Koide-style geometry error:
+---
 
-```text
-0.0
-```
-
-The log-cos scan also detects statistically significant structure in log-frequency space:
-
-```text
-k = 44.5341
-Delta chi2 = 21.139
-p_shuffle_scanmax = 0.000999
-```
-
-The p-value is the floor for 1000 shuffle/null trials, meaning no shuffled spectrum exceeded the real scan statistic in that run.
-
-## Repository Purpose
-
-This repository is intended to make the artifact independently inspectable.
-
-The goal is simple:
-
-```text
-data -> scripts -> outputs -> ratios -> null test
-```
-
-Anyone should be able to clone the repository, run the scan, and reproduce the reported spectral structure.
-
-This repository does not require accepting any microscopic mechanism in advance. The primary claim is empirical:
-
-> The waveform artifact contains persistent, structured harmonic behavior with exact `Q = 2/3` sideband geometry and significant log-cos modulation.
-
-## Prediction Ledger
-
-The accompanying protocol ledger records a pre-declared claim that a brief optical excitation sequence can induce a long-lived harmonic state in a silicon photodiode.
-
-The predicted observables include:
-
-- transition from baseline to structured output,
-- a discrete harmonic ladder,
-- stable frequency ratios,
-- persistence after illumination ceases,
-- invariance under later readout,
-- falsifiability by absence of the effect in virgin devices or by immediate decay after excitation.
-
-The ledger is included to establish that the central claim was protocol-defined rather than reconstructed after the spectral scan.
-
-## Reproduction
+## Reproduce the Scan
 
 ### 1. Install dependencies
 
@@ -115,191 +75,217 @@ The ledger is included to establish that the central claim was protocol-defined 
 pip install numpy pandas scipy matplotlib python-dotenv
 ```
 
-Optional GPU acceleration:
+GPU acceleration (optional, used for the committed outputs):
 
 ```bash
 pip install cupy
 ```
 
-### 2. Configure oscilloscope IP
-
-Create a private `.env` file:
-
-```env
-SCOPE_IP=
-```
-
-Do not commit your real scope IP.
-
-The repository includes `.env.example` as a blank template.
-
-### 3. Run the `.npy` artifact scan
+### 2. Run the log-cos scan
 
 ```bash
-python scripts/scan_npy_logcos.py --input data/waveform_raw.npy --sample-rate 20000 --fmin 20 --fmax 1000
+python scan_npy_logcos.py \
+  --input captures/20260309_010802/waveform_raw.npy \
+  --sample-rate 20000 \
+  --fmin 20 \
+  --fmax 1000
 ```
 
-For a stronger null test:
+For a stronger null test (5000 shuffles instead of 1000):
 
 ```bash
-python scripts/scan_npy_logcos.py --input data/waveform_raw.npy --sample-rate 20000 --fmin 20 --fmax 1000 --nperm 5000
+python scan_npy_logcos.py \
+  --input captures/20260309_010802/waveform_raw.npy \
+  --sample-rate 20000 \
+  --fmin 20 \
+  --fmax 1000 \
+  --nperm 5000
 ```
 
-### 4. Expected outputs
+Outputs are written to `outputs_npy_logcos/`. Compare `summary.json` against the committed version to verify reproduction.
 
-The scan writes:
+### 3. Capture a live waveform (optional)
 
-```text
-outputs_npy_logcos/
-  spectrum.csv
-  spectrum_log_domain.csv
-  top_peaks.csv
-  ratio_pairs.csv
-  koide_triplets.csv
-  logcos_scan.csv
-  logcos_null.csv
-  summary.json
-  waveform.png
-  spectrum.png
-  logcos_scan.png
-  logcos_best_fit.png
+Configure the oscilloscope IP:
+
+```bash
+cp .env.example .env
+# edit .env: SCOPE_IP=<your scope address>
 ```
 
-The most important files are:
+Then run:
 
-```text
-summary.json
-top_peaks.csv
-ratio_pairs.csv
-koide_triplets.csv
-logcos_scan.csv
-logcos_null.csv
+```bash
+python siglent_proof.py
 ```
 
-## Main Analysis Steps
+---
 
-### FFT Spectrum
+## Observed Spectral Structure
 
-The raw waveform is transformed into a frequency-domain spectrum. Peaks are detected from the FFT amplitude spectrum.
+The FFT of the captured waveform resolves discrete peaks at integer multiples of 60 Hz:
 
-### Ratio-Pair Scan
+| Frequency (Hz) | Amplitude (arb.) | Rank by amplitude |
+|---|---|---|
+| 60 | 60.43 | 3 |
+| 120 | 191.00 | 1 |
+| 180 | 39.13 | 5 |
+| 240 | 114.99 | 2 |
+| 300 | 14.05 | 7 |
+| 360 | 47.97 | 4 |
+| 480 | 17.84 | 6 |
+| 600 | 13.94 | 8 |
 
-Detected peaks are compared pairwise to identify exact or near-exact rational locks, especially:
+The ladder is 60 Hz-spaced throughout. Because 60 Hz harmonics can arise from mains or environmental pickup, controls are essential to interpret the origin of this structure (see [Controls and Falsification](#controls-and-falsification)). The ratio and log-cos analyses are reproducible measurements of the artifact regardless of source.
 
-```text
-2/3
+---
+
+## Q = 2/3 Sideband Geometry
+
+### Exact ratio pairs
+
+Two peak pairs satisfy the 2/3 ratio exactly (δ = 0.000):
+
+```
+120 Hz / 180 Hz = 2/3
+240 Hz / 360 Hz = 2/3
 ```
 
-The artifact contains:
+### Exact Koide-style triplets
 
-```text
-120 / 180 = 2/3
-240 / 360 = 2/3
+For ordered triplets (f₁, f₂, f₃) the diagnostic computes:
+
+```
+Q_low  = f₁ / f₂
+Q_high = f₃ / (2 f₂)
+Q_mean = (Q_low + Q_high) / 2
 ```
 
-### Koide-Style Triplet Scan
+Two triplets satisfy Q\_low = Q\_high = 2/3 exactly:
 
-For ordered triplets:
+| Triplet (Hz) | Q\_low | Q\_high | Q\_mean | koide\_error |
+|---|---|---|---|---|
+| (120, 180, 240) | 2/3 | 2/3 | 2/3 | 0.0 |
+| (240, 360, 480) | 2/3 | 2/3 | 2/3 | 0.0 |
 
-```text
-f1 < f2 < f3
+Both triplets reduce to the integer ratio 2:3:4. The same sideband geometry appears at two independent frequency scales in the same capture.
+
+This is called **Q = 2/3 sideband geometry** throughout this repository. It is a statement about the dimensionless ratio structure of the measured frequency spectrum, not a claim about particle masses or the Koide formula for leptons. The shared diagnostic form is noted because it provides a compact, exact three-frequency locking condition.
+
+---
+
+## Log-Cos Scan
+
+### Method
+
+The FFT amplitude spectrum is mapped to log-frequency space:
+
+```
+ℓ = ln(f)
 ```
 
-the code computes:
+over the window f ∈ [20, 1000] Hz. The tested model at each candidate wavenumber k is:
 
-```text
-Q_low  = f1 / f2
-Q_high = f3 / (2*f2)
+```
+y(ℓ) = C + a cos(k ℓ) + b sin(k ℓ)
 ```
 
-The exact sideband condition is:
+The scan searches k ∈ [0.5, 80] at 4000 steps, fitting by least squares at each k and recording:
 
-```text
-Q_low = Q_high = 2/3
+```
+Δχ² = χ²_null − χ²_logcos
 ```
 
-The artifact contains exact triplets:
+where χ²\_null is the variance-normalized residual of the constant-only fit.
 
-```text
-120, 180, 240
-240, 360, 480
+### Null test
+
+The significance of the scan maximum is assessed against a shuffle null: the FFT amplitudes are permuted 1000 times, the full k-scan is repeated on each shuffled spectrum, and the scan-max Δχ² is recorded. The reported p-value is the fraction of shuffled trials whose scan-max exceeded the real scan-max.
+
+This is a **scan-max shuffle null** — it accounts for the look-elsewhere effect across the full tested k range.
+
+### Observed result
+
+```
+Best k             =  44.5341
+Δχ²                =  21.139
+χ²_null            = 491.000
+χ²_logcos          = 469.861
+Amplitude A        =   0.293
+Null trials        =  1000
+p_shuffle_scanmax  =  0.000999   (1/1001 — resolution floor of this run)
 ```
 
-### Log-Cos Scan
+No shuffled spectrum exceeded the real scan statistic in this run.
 
-The spectrum is mapped into log-frequency space:
+The p-value of 0.000999 is the measured scan-max shuffle result for this run and this analysis window. It is not a Gaussian sigma conversion and should not be generalized beyond the tested k range and sample.
 
-```text
-ell = ln(f)
-```
+---
 
-The tested model is:
+## Prediction Ledger
 
-```text
-y(ell) = C + a*cos(k*ell) + b*sin(k*ell)
-```
+`proof_ledger.json` records the pre-declared protocol and expected observables.
 
-The scan searches over `k`, fits the best log-cos mode, and compares the real scan statistic against shuffled spectra.
+The ledger was written before the canonical capture and specifies:
 
-Observed result:
+- the excitation protocol sequence,
+- the expected transition from baseline to structured output,
+- the expected presence of a discrete harmonic ladder,
+- the expected persistence of structure after illumination ceases,
+- the expected ratio geometry,
+- the falsification conditions.
 
-```text
-k = 44.5341
-Delta chi2 = 21.139
-p_shuffle_scanmax = 0.000999
-```
+The ledger establishes that the reported structure was predicted, not reconstructed after the fact. The baseline run (epoch 1773046194) captures a virgin device prior to excitation and is included in `proof_runs/` for direct comparison against the post-excitation artifact.
+
+---
+
+## Controls and Falsification
+
+The following controls are necessary to distinguish an induced device state from ordinary environmental pickup or instrument artifact. They are the direct falsification tests for the central claim.
+
+| Control | What it tests |
+|---|---|
+| Virgin photodiode, excitation omitted | Does the harmonic structure appear without the protocol? |
+| Sham-excited control (protocol run, diode dark or absent) | Does the excitation sequence itself drive the observation? |
+| Disconnected input / terminated channel | Is the structure present in the measurement chain alone? |
+| Dark enclosure, no optical path | Is ambient light driving the observation? |
+| Scope channel swap | Is the signal channel-specific or instrument-wide? |
+| Battery-powered or preamplifier-isolated supply | Does mains coupling in the supply account for the 60 Hz ladder? |
+| Shielding and grounding variation | Does the structure track environmental EM conditions? |
+| Repeat captures across devices and days | Is the effect reproducible across hardware instances and time? |
+| Pre-declared parameter lock (fixed fmin, fmax, k range) | Are scan parameters chosen post-hoc to fit the result? |
+
+The central claim is **falsified** if:
+
+- virgin devices (excitation omitted) produce identical spectral structure under blinded comparison,
+- the structure vanishes immediately after excitation ceases,
+- the Q = 2/3 triplets do not recur in independent captures under identical protocol,
+- disconnected-channel or terminated-input controls reproduce the full harmonic ladder.
+
+All control runs should be processed through the same `scan_npy_logcos.py` pipeline and committed alongside the primary artifact so outputs are directly comparable.
+
+---
 
 ## Interpretation
 
-The artifact demonstrates three independent structures:
+Three independently computable structures are present in the artifact:
 
-1. A discrete harmonic ladder.
-2. Exact `Q = 2/3` ratio geometry.
-3. Significant log-cos modulation in `ln(f)`.
+1. **A 60 Hz-spaced discrete harmonic ladder** across at least 8 resolved peaks.
+2. **Exact Q = 2/3 sideband geometry** in two non-overlapping triplets at different frequency scales.
+3. **Statistically significant log-cos modulation** in ln(f) with p\_shuffle\_scanmax at the 1/1001 floor over 1000 trials.
 
-The key interpretation is scale-free:
+The ratio geometry is scale-free: both triplets (120, 180, 240) and (240, 360, 480) encode the same 2:3:4 integer structure at different absolute frequencies. The spectral structure is therefore not a single-frequency artifact but a geometric relationship preserved across scales within the same capture.
 
-> The photodiode state does not merely preserve a single frequency. It preserves a ratio geometry.
+Whether this structure reflects an optically induced device state or a reproducible environmental/pickup pattern is the open experimental question. The controls listed above are the direct path to resolving it. This repository provides the baseline artifact, the canonical analysis outputs, and the pipeline against which all control runs are to be compared.
 
-The triplets:
+---
 
-```text
-120 : 180 : 240
-240 : 360 : 480
-```
+## Citation / Author
 
-both reduce to:
+**Repository:** `rickyjreyes/photodiode`  
+**Capture instrument:** Siglent Technologies SDS1104X HD (firmware 5.5.6.1.1.0.2)  
+**Primary capture:** 2026-03-09, epoch 1773046275
 
-```text
-2 : 3 : 4
-```
+If citing this artifact package, reference the repository commit hash of the canonical run together with `summary.json` for exact scalar reproducibility.
 
-This means the same sideband geometry appears at different scale levels.
-
-## Falsification
-
-The claim is falsified or weakened if:
-
-- virgin devices do not enter a structured state under the protocol,
-- later captures show only broadband noise,
-- the `2/3` and triplet geometry do not recur,
-- the signal vanishes immediately after excitation,
-- the same structure appears identically in controls without induction,
-- the effect is fully explained by ordinary mains pickup under blinded controls.
-
-## Controls and Next Steps
-
-Recommended next tests:
-
-- Run multiple virgin photodiodes.
-- Include sham-excited controls.
-- Include disconnected-channel controls.
-- Include terminated-input oscilloscope controls.
-- Repeat captures over multiple days.
-- Repeat log-cos scans with fixed pre-declared parameters.
-- Compare induced and non-induced devices under identical shielding and measurement conditions.
-
-## Notes
-
-The repository is organized as an artifact and reproduction package. The strongest use is to inspect the data, rerun the scripts, and compare the reported outputs against controls.
-
+> [Placeholder — author affiliation and formal citation to be added.]
