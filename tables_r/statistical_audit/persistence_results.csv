@@ -1,0 +1,4 @@
+"metric","value","note"
+"within_capture_frames",36,"Persistence here means stability WITHIN the 0.500 s capture only. No inference about seconds/minutes/days."
+"capture_duration_s",0.5,"Persistence here means stability WITHIN the 0.500 s capture only. No inference about seconds/minutes/days."
+"across_capture_testable",0,"Only 2 post-excitation capture(s); >=3 needed for a curve."
