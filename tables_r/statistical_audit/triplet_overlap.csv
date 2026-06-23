@@ -1,0 +1,2 @@
+"triplet_a","triplet_b","shared_frequencies","n_shared","overlapping"
+"(120,180,240)","(240,360,480)","240",1,TRUE

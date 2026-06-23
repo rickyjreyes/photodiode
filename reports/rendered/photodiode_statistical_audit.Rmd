@@ -1,0 +1,283 @@
+---
+title: "Photodiode Post-Excitation Waveform: Statistical Audit"
+subtitle: "Computational reproduction, control audit, and signal-processing audit"
+date: today
+params:
+  repo_root: ".."
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    embed-resources: true
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+repo <- tryCatch(params$repo_root, error = function(e) "..")
+T <- file.path(repo, "tables_r", "statistical_audit")
+F <- file.path(repo, "figures_r", "statistical_audit")
+rd <- function(f) {
+  p <- file.path(T, f)
+  if (file.exists(p)) utils::read.csv(p, check.names = FALSE) else data.frame()
+}
+fig <- function(f) {
+  p <- file.path(F, f)
+  if (file.exists(p)) knitr::include_graphics(normalizePath(p)) else invisible()
+}
+show <- function(df, n = 30) {
+  if (!nrow(df)) return(cat("_no data_"))
+  knitr::kable(utils::head(df, n))
+}
+```
+
+# 1. Executive summary
+
+This audit re-implements, in R, the analysis behind the repository's claim of an
+"optically induced harmonic state" in a silicon photodiode, and stress-tests it
+against ordinary explanations (60 Hz mains pickup, instrument artifacts,
+spectral leakage, peak-selection, and analysis-window choices).
+
+**Potentially supported by the data:**
+
+- The post-excitation capture contains a discrete **60 Hz-spaced harmonic
+  ladder** (peaks at 60–600 Hz).
+- The **canonical Python log-cos calculation is reproduced in R** to ~13
+  significant figures (see Parity, §19).
+- Particular **2:3:4 frequency ratios** occur among the detected peaks.
+- The log-cos scan-max **exceeds the canonical shuffle null** (p at the Monte
+  Carlo resolution floor).
+
+**NOT established by the available data:**
+
+- That optical induction *caused* the structure.
+- That the ladder is *not* mains pickup — the baseline run is itself
+  6/6 mains-coincident, and **no raw control captures exist**.
+- That the two exact Q = 2/3 triplets are *independent* — both lie on the 60 Hz
+  ladder and **share the 240 Hz peak**; the geometry is an **arithmetic
+  consequence**, not independent evidence.
+- That the shuffle p-value is valid against **colored-noise or mains-harmonic**
+  alternatives.
+- Any claim of **persistence** beyond the 0.5 s capture, a **resonator quality
+  factor**, or confirmation of WCT.
+
+```{r}
+show(rd("final_claim_matrix.csv"))
+```
+
+# 2. Experimental claim and alternatives
+
+The scientific question: *does the post-excitation waveform contain a
+reproducible induced device state distinguishable from mains pickup, EM
+coupling, instrument artifacts, leakage, peak-selection, and window choices?*
+The central alternative is ordinary 60 Hz mains / environmental pickup.
+
+# 3. Capture inventory and prediction ledger
+
+```{r}
+show(rd("capture_registry.csv"))
+```
+
+**Data reality:** one raw post-excitation `.npy`, two–three raw CSV waveforms
+(post / undocumented phase), a baseline that exists **only as a peak table**,
+and **no raw control waveforms**.
+
+```{r}
+fig("fig01_capture_flow.png")
+show(rd("prediction_ledger_audit.csv"))
+```
+
+The prediction ledger demonstrates chronology, not correctness, and is not a
+substitute for controls.
+
+# 4. Waveform calibration and quality control
+
+```{r}
+show(rd("waveform_qc.csv"))
+fig("fig02_waveform_qc.png")
+```
+
+The Siglent convention `voltage = raw_byte * vscale / 25 - offset` implies a
+quantization step of `vscale/25 = 0.12 V`; the committed `.npy` values are
+integer multiples of 0.12 V, consistent with an 8-bit ADC.
+
+# 5. Baseline versus post-excitation comparison
+
+```{r}
+fig("fig03_baseline_post_waveforms.png")
+fig("fig05_difference_spectrum.png")
+show(rd("harmonic_effect_sizes.csv"))
+```
+
+Baseline and post amplitudes are on **different normalizations** (calibrated V
+vs unnormalized FFT) and are not directly comparable; the difference spectrum
+cannot be computed without the baseline raw waveform.
+
+# 6. Spectral estimation
+
+```{r}
+show(rd("spectrum_summary.csv"))
+fig("fig04_psd_comparison.png")
+```
+
+Native FFT-bin spacing is **2 Hz** (0.5 s capture). Raw FFT amplitudes are not
+compared across windows without coherent-gain normalization; zero-padding is
+used for interpolation only, never as true resolution.
+
+# 7. Mains-harmonic hypothesis
+
+```{r}
+show(rd("peak_estimates.csv"))
+fig("fig07_frequency_residuals.png")
+```
+
+All ladder peaks sit on integer multiples of 60 Hz, and the baseline is already
+mains-coincident. This is **consistent with mains pickup**; control separation
+would be required to attribute the ladder to an induced state.
+
+# 8. Harmonic ladder
+
+```{r}
+show(rd("harmonic_ladder.csv"))
+fig("fig06_harmonic_ladder.png")
+```
+
+# 9. Q = 2/3 ratio geometry
+
+```{r}
+show(rd("ratio_geometry.csv"), 12)
+show(rd("triplet_overlap.csv"))
+fig("fig09_q_geometry.png")
+fig("fig10_triplet_overlap.png")
+```
+
+Any integer-harmonic triplet proportional to 2:3:4 gives `Q_low = Q_high = 2/3`
+by construction. The triplets (120,180,240) and (240,360,480) **share 240 Hz**
+and are **not** statistically independent.
+
+# 10. Canonical log-cos reproduction
+
+```{r}
+show(rd("logcos_results.csv"))
+fig("fig11_logcos_scan.png")
+fig("fig20_python_r_parity.png")
+```
+
+# 11. Stronger log-cos nulls
+
+```{r}
+show(rd("logcos_null_comparison.csv"))
+fig("fig12_logcos_nulls.png")
+```
+
+The canonical shuffle null destroys frequency-local correlation. Block-permutation,
+stationary-bootstrap, colored-noise (AR), and mains-harmonic nulls are stronger
+and indicate whether the modulation is an expected byproduct of a finite
+harmonic ladder.
+
+# 12. Window and detrending sensitivity
+
+```{r}
+show(rd("window_sensitivity.csv"), 20)
+fig("fig14_window_sensitivity.png")
+fig("fig13_logcos_bootstrap.png")
+```
+
+# 13. Time-frequency persistence
+
+```{r}
+show(rd("persistence_results.csv"))
+fig("fig15_spectrogram.png")
+fig("fig16_harmonic_persistence.png")
+```
+
+Persistence here means stability **within** the 0.5 s capture only. No claim is
+made about seconds, minutes, hours, or days.
+
+# 14. Experimental controls
+
+```{r}
+show(rd("control_comparison.csv"))
+fig("fig17_control_matrix.png")
+```
+
+Missing control categories are listed explicitly and shown as NA. The central
+causal claim is **NOT_TESTABLE_WITH_AVAILABLE_DATA**.
+
+# 15. Ringdown analysis
+
+```{r}
+show(rd("ringdown_models.csv"))
+```
+
+Not testable: no time-resolved post-excitation amplitude series.
+`Q_ratio` (2/3 geometry) is distinct from `Q_resonator = pi f tau`.
+
+# 16. Multiple-testing correction
+
+```{r}
+show(rd("multiple_testing.csv"))
+```
+
+The canonical scan-global p corrects only for the look-elsewhere effect across
+k — not for capture, window, detrending, peak-threshold, ratio, or control
+selection.
+
+# 17. Null calibration
+
+```{r}
+show(rd("null_calibration.csv"))
+fig("fig18_null_calibration.png")
+```
+
+# 18. Injection recovery
+
+```{r}
+show(rd("injection_recovery.csv"), 40)
+fig("fig19_injection_recovery.png")
+```
+
+# 19. Python/R parity
+
+```{r}
+show(rd("python_r_parity.csv"))
+```
+
+R reproduces the deterministic canonical quantities within tolerance. Stochastic
+nulls are compared by distribution, not draw-for-draw. R never calls the Python
+analysis script.
+
+# 20. Claim-status matrix
+
+```{r}
+show(rd("final_claim_matrix.csv"))
+fig("fig21_evidence_dashboard.png")
+```
+
+# 21. Limitations
+
+- Single raw post-excitation capture; baseline is peak-table only.
+- No raw control waveforms (sham, disconnected, terminated, dark, channel-swap,
+  battery, multi-device/day).
+- 2 Hz FFT resolution; exact frequencies rely on sub-bin estimates.
+- Stronger nulls and calibration run at development resolution unless invoked at
+  full resolution.
+
+# 22. Reproducibility information
+
+```{r}
+cat("Generated:", as.character(Sys.time()), "\n")
+print(sessionInfo())
+```
+
+Exact full-resolution command:
+
+```
+Rscript R/render_photodiode_audit.R --mode waveform --null-n 10000 \
+  --bootstrap-n 5000 --calibration-n 10000 --injection-n 1000 --seed 20260309
+```

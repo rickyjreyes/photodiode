@@ -1,0 +1,8 @@
+"prediction","declaration_type","observed_status","observed_result","specified_before_capture","verdict"
+"60 Hz-spaced harmonic ladder present","predeclared","OBSERVED","Ladder present in post capture",TRUE,"TRUE"
+"Baseline (virgin) run captured before excitation","predeclared","OBSERVED","Baseline run 1773046194 exists (peak table)",TRUE,"TRUE"
+"Q=2/3 ratio geometry in triplets","qualitative expectation","OBSERVED","Two exact triplets, but arithmetic consequence of ladder",FALSE,"PARTIAL"
+"Persistence after illumination ceases","qualitative expectation","NOT_TESTED","Single 0.5 s capture; no time series",FALSE,"INCONCLUSIVE"
+"Controls falsify environmental pickup","predeclared falsification","NOT_PERFORMED","No raw control captures committed",TRUE,"FAIL_TO_TEST"
+"Pre-declared parameter lock (fmin,fmax,k)","predeclared","OBSERVED","Parameters fixed and reproduced exactly",TRUE,"TRUE"
+"proof_ledger.json file integrity","metadata","MALFORMED_TRUNCATED","ledger JSON is truncated (premature EOF); machine-readable predictions unavailable",NA,"DATA_DEFECT"

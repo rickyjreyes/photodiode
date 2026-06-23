@@ -1,0 +1,14 @@
+"analysis_id","condition","control_type","elapsed_time_since_excitation_s","rms_voltage","amp_60Hz","total_harmonic_power","n_harmonics","ladder_statistic","q_triplet_count","min_koide_error","logcos_best_k","logcos_delta_chi2","logcos_A"
+"cap_post_canonical","post",NA,NA,13.6277275523104,60.4267255854921,397.443621943683,11,149.041358228881,2,0,44.5341335333833,21.1390829089852,0.292685123447527
+"cap_post_1773046275","post",NA,NA,0.0763359643680486,63.3030965941166,459.032187943674,12,286.895117464796,2,0,27.6162790697674,19.5502992313283,0.284952159173589
+"cap_run_1773047118","unknown",NA,NA,0.00119993999849992,0.108148015647861,0,0,0,0,0.00503618913851304,46.3432108027007,8.58879063410376,0.18772265162386
+"cap_usr_wf","unknown",NA,NA,0.00753740511327699,0.794019018833527,487.732015887209,10,182.899505957703,2,0,27.6361590397599,22.0610132136447,0.302756885324862
+"sham_excited","MISSING_CONTROL","sham_excited",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"disconnected_input","MISSING_CONTROL","disconnected_input",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"terminated_channel","MISSING_CONTROL","terminated_channel",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"dark_enclosure","MISSING_CONTROL","dark_enclosure",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"channel_swap","MISSING_CONTROL","channel_swap",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"battery_isolated_supply","MISSING_CONTROL","battery_isolated_supply",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"shielding_grounding_variation","MISSING_CONTROL","shielding_grounding_variation",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"independent_device_or_day","MISSING_CONTROL","independent_device_or_day",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"mains_frequency_monitor","MISSING_CONTROL","mains_frequency_monitor",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
