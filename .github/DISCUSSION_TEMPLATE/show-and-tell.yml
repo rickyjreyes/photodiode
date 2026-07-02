@@ -1,0 +1,72 @@
+title: "[Replication or Experimental Result] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share a reproduction, failed reproduction, new capture, control result, alternate analysis, or apparatus extension. Null and artifact findings are welcome.
+  - type: dropdown
+    id: result_type
+    attributes:
+      label: Result type
+      options:
+        - Exact computational reproduction
+        - Independent apparatus replication
+        - Failed or incomplete replication
+        - New controlled capture
+        - Negative or artifact control
+        - Alternate signal-processing analysis
+        - Persistence or ringdown measurement
+        - Lock/relock experiment
+        - Device or instrument comparison
+    validations:
+      required: true
+  - type: textarea
+    id: apparatus
+    attributes:
+      label: Apparatus and protocol
+      description: Identify photodiode, source, optics, circuit, oscilloscope, channel, coupling, grounding, shielding, excitation sequence, timing, and calibration.
+    validations:
+      required: true
+  - type: textarea
+    id: acquisition
+    attributes:
+      label: Acquisition metadata
+      description: Include capture date, sample rate, sample count, duration, scale, offset, trigger, bandwidth limit, frequency window, and raw file format.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Environment and exact command
+      description: Include repository commit, OS, language and dependency versions, random seed, parameters, and command.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: controls
+    attributes:
+      label: Controls and comparison captures
+      description: Describe baseline, dark, disconnected, dummy-load, mains-monitor, sham, repeat-device, and repeat-day results.
+    validations:
+      required: true
+  - type: textarea
+    id: results
+    attributes:
+      label: Quantitative results
+      description: Report peak frequencies and amplitudes, harmonic spacing, ratios, decay estimates, lock/relock timings, scan statistic, null exceedances, uncertainty, and verdict as applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: artifacts
+    attributes:
+      label: Auditable artifacts
+      description: Link raw waveforms, photographs, metadata, scripts, logs, machine-readable outputs, calibration records, and archived releases.
+    validations:
+      required: true
+  - type: textarea
+    id: interpretation
+    attributes:
+      label: Narrow interpretation and limitations
+      description: Separate what was measured from the proposed cause, and identify unresolved confounds or contradictory observations.
+    validations:
+      required: true
