@@ -1,0 +1,66 @@
+title: "[Experiment Proposal] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose a controlled experiment, signal-processing improvement, falsification test, or independent replication. Define the predicted observation and failure condition before collecting or reanalyzing data.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Optical excitation protocol
+        - Electrical or environmental controls
+        - Independent apparatus replication
+        - Oscilloscope acquisition
+        - FFT, windowing, or peak detection
+        - Persistence or ringdown measurement
+        - Lock/relock perturbation test
+        - Log-cos or alternate statistical model
+        - Device-to-device comparison
+        - Data provenance or machine-readable reporting
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Hypothesis or artifact risk
+      description: State the physical hypothesis, measurement question, or mundane artifact the test is designed to distinguish.
+    validations:
+      required: true
+  - type: textarea
+    id: protocol
+    attributes:
+      label: Proposed protocol
+      description: Specify apparatus, shielding, grounding, illumination, timing, acquisition settings, repetitions, randomization, and analysis steps.
+    validations:
+      required: true
+  - type: textarea
+    id: preregistration
+    attributes:
+      label: Predicted outcomes and decision rule
+      description: Define in advance what counts as support, failure, artifact, or inconclusive evidence.
+    validations:
+      required: true
+  - type: textarea
+    id: controls
+    attributes:
+      label: Required controls
+      description: Include baseline, dark, disconnected, dummy-load, mains-monitor, sham illumination, alternate photodiode, repeat-day, or blinded-analysis controls as applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: outputs
+    attributes:
+      label: Required auditable outputs
+      description: List raw waveforms, metadata, calibration records, environment manifests, scripts, logs, machine-readable tables, and plots to preserve.
+    validations:
+      required: true
+  - type: textarea
+    id: confounds
+    attributes:
+      label: Known confounds
+      description: Address mains pickup, aliasing, saturation, clipping, triggering, FFT leakage, window selection, scope coupling, photodiode recovery, and post-selection as relevant.
+    validations:
+      required: false
