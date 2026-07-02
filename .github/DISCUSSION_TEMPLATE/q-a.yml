@@ -1,0 +1,70 @@
+title: "[Question] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask a focused question about the photodiode apparatus, oscilloscope capture, FFT pipeline, harmonic analysis, decay estimates, lock/relock events, controls, or interpretation.
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      options:
+        - Apparatus or optical protocol
+        - Oscilloscope capture
+        - Raw waveform or file format
+        - FFT or peak detection
+        - Harmonic ladder or ratio geometry
+        - Log-cos scan or null model
+        - Decay, persistence, or lock/relock analysis
+        - Controls, artifacts, or environmental pickup
+        - Reproduction environment
+        - Interpretation
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: reference
+    attributes:
+      label: Exact reference
+      description: Capture ID, file, script, output, figure, ledger entry, commit, or timestamp.
+      placeholder: captures/.../waveform_raw.npy, summary.json, commit abc1234
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: State the exact experimental, signal-processing, statistical, or interpretive question.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment and command
+      description: Include OS, Python version, dependency versions, sample rate, frequency window, parameters, seed, and exact command.
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed result
+      description: Include waveform behavior, peak table, FFT output, residual, error, or relevant artifact path.
+    validations:
+      required: false
+  - type: textarea
+    id: controls
+    attributes:
+      label: Relevant controls
+      description: Identify dark, baseline, disconnected, dummy-load, mains-monitor, repeat-device, or alternate-instrument controls already checked.
+    validations:
+      required: false
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: I have separated the measured waveform structure from claims about its physical cause.
+          required: true
+        - label: I understand that 60 Hz harmonics require explicit mains and environmental-pickup controls.
+          required: true
