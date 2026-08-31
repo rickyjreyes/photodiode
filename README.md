@@ -14,6 +14,8 @@ All scripts are executable. All outputs are committed. The prediction ledger rec
 
 The physical origin of the locked harmonic state is **unresolved**. Its 60 Hz spacing means mains-related or environmental coupling must remain in the alternative set, but the spacing alone does not identify the source. The archived runs also show that the high-amplitude harmonic lock is **condition-dependent rather than continuously present**.
 
+The experimenter additionally reports that the harmonic state can be turned **on and off with the photodiode while the surrounding measurement setup is otherwise held fixed**. That observation points to **diode dependence** of the locked state rather than a continuously present oscilloscope/background signal alone. It is currently documented as retrospective experimental context; a dedicated labeled or blinded ON/OFF raw-control series is still required to quantify the causal separation directly from committed waveforms.
+
 ---
 
 ## Repository Contents
@@ -29,6 +31,8 @@ photodiode_proof.py          — induction protocol driver
 docs/
   LOCKED_VS_NO_LOCK_RESULT_2026-08-31.md
                               — archived state-switch evidence and limitations
+  DIODE_DEPENDENCE_CONTROL_2026-08-31.md
+                              — diode ON/OFF observation and decisive replication protocol
 
 captures/
   20260309_010802/
@@ -161,13 +165,27 @@ This establishes a narrow but important result:
 
 This directly challenges a simplistic invariant-background model in which the full locked ladder is assumed to be continuously present in the measurement stream. It does **not** exclude intermittent or condition-dependent electrical, environmental, grounding, magnetic, or instrument coupling.
 
-The original archive labels run `1773047118` as `phase: unknown`, and its device metadata are incomplete. Therefore it is not silently relabeled as a matched post-excitation control.
+The original archive labels run `1773047118` as `phase: unknown`, and its device metadata are incomplete. Therefore it is not silently relabeled as a matched post-excitation or diode-OFF control.
 
 See [`docs/LOCKED_VS_NO_LOCK_RESULT_2026-08-31.md`](docs/LOCKED_VS_NO_LOCK_RESULT_2026-08-31.md) and [`tables_r/statistical_audit/locked_vs_no_lock_comparison.csv`](tables_r/statistical_audit/locked_vs_no_lock_comparison.csv) for the explicit result and machine-readable values.
 
+### Diode-dependent switching observation
+
+The experimenter reports that the pronounced harmonic state can be turned **on and off with the photodiode**, with the surrounding oscilloscope/acquisition environment otherwise held fixed.
+
+If reproduced in a dedicated matched control series, this would establish a stronger causal statement than the run-to-run contrast alone:
+
+> **The probability of entering the locked harmonic state depends on the diode condition.**
+
+That would substantially weaken a simple scope-only or continuously present ambient-background explanation. It would **not**, by itself, distinguish an unusual confined state from conventional diode physics. Ordinary alternatives would still include photodiode rectification, nonlinear junction response, diode-dependent impedance/capacitance, carrier trapping, leakage/surface-state effects, and diode-mediated mixing or amplification of an ambient 60 Hz field.
+
+The current repository therefore treats the diode ON/OFF observation as **retrospective experimental evidence requiring a dedicated archived replication**, not as a completed blinded causal control.
+
+See [`docs/DIODE_DEPENDENCE_CONTROL_2026-08-31.md`](docs/DIODE_DEPENDENCE_CONTROL_2026-08-31.md) for the claim boundary and the recommended ABAB/randomized protocol.
+
 ### Experimental context annotation
 
-The experimenter reports that the photodiode session used improvised electromagnetic shielding (a makeshift Faraday enclosure), that the acquisition system was restarted, and that a subsequent repeat showed a delayed response without entering the earlier locked state. This history is recorded as **retrospective experimental context**, not as preregistered metadata. The existing archive does not independently map every element of that recollection to run `1773047118`, so the repository-supported claim remains the locked/no-lock state contrast above.
+The experimenter reports that the photodiode session used improvised electromagnetic shielding (a makeshift Faraday enclosure), that the acquisition system was restarted, and that a subsequent repeat showed a delayed response without entering the earlier locked state. This history is recorded as **retrospective experimental context**, not as preregistered metadata. The existing archive does not independently map every element of that recollection to run `1773047118`, so the repository-supported direct claim remains the locked/no-lock state contrast above.
 
 Improvised shielding also does not necessarily remove conducted coupling, grounding effects, or low-frequency magnetic fields. The appropriate conclusion is therefore that **mains-related coupling remains unexcluded, but is not established as the origin**.
 
@@ -282,6 +300,7 @@ The following controls are the direct path to distinguishing a condition-depende
 
 | Control | What it tests |
 |---|---|
+| **Predeclared diode ON/OFF ABAB or randomized sequence** | Does the probability of lock track diode condition while the rest of the acquisition setup remains fixed? |
 | Virgin photodiode, excitation omitted | Does the harmonic structure appear without the protocol? |
 | Sham-excited control (protocol run, diode dark or absent) | Does the excitation sequence itself drive the observation? |
 | Disconnected input / terminated channel | Is the structure present in the measurement chain alone? |
@@ -293,7 +312,9 @@ The following controls are the direct path to distinguishing a condition-depende
 | Repeat captures across devices and days | Is the effect reproducible across hardware instances and time? |
 | Pre-declared parameter lock (fixed fmin, fmax, k range) | Are scan parameters chosen post-hoc to fit the result? |
 
-The induced-state interpretation would be strongly challenged if matched virgin, disconnected, or terminated-input controls reproducibly generate the same locked spectrum under identical acquisition conditions. Conversely, repeatable protocol-specific locking with flat measurement-chain controls would substantially weaken simple background explanations.
+The highest-value immediate control is the diode-state series. With all other settings fixed, repeated ON/OFF or randomized conditions should be captured raw and analyzed blind using a predeclared lock classifier. The primary causal comparison is `P(lock | diode ON)` versus `P(lock | diode OFF)`.
+
+The induced-state interpretation would be strongly challenged if matched virgin, disconnected, terminated-input, or diode-OFF controls reproducibly generate the same locked spectrum under identical acquisition conditions. Conversely, repeatable diode-specific or protocol-specific locking with flat measurement-chain controls would substantially weaken simple background explanations.
 
 All matched control runs should be processed through the same `scan_npy_logcos.py` pipeline and committed alongside the primary artifact so outputs are directly comparable.
 
@@ -311,9 +332,11 @@ The ratio geometry is scale-free: the triplets (120, 180, 240) and (240, 360, 48
 
 The **physical source remains unresolved**. The 60 Hz spacing makes mains-related coupling a required alternative to test; it does not justify assigning the observation to mains. Separately, the archived `1773046275` → `1773047118` comparison demonstrates that the full harmonic lock is not continuously present across retained raw captures. That state dependence is evidence against a simple invariant-background description, while still leaving intermittent or condition-dependent coupling mechanisms open.
 
-The shielding/restart/delayed-no-lock history is retained as retrospective experimental context and is not used to overstate what the original machine-readable provenance establishes.
+The experimenter's report that the state can be switched on and off with the diode further motivates a **diode-dependent state / nonlinear-transduction hypothesis**. If a predeclared matched ON/OFF series reproduces that control, the result would move beyond generic 60 Hz coincidence by demonstrating that the diode condition predicts whether the locked state appears. Conventional diode nonlinearity, rectification, impedance/capacitance changes, carrier trapping, and diode-mediated environmental mixing would still need to be separated from any more unusual mechanism.
 
-The repository therefore reports what was measured, what was predicted, what reproduces computationally, what changes across runs, and which causal questions remain open.
+The shielding/restart/delayed-no-lock and diode ON/OFF histories are retained as retrospective experimental context and are not used to overstate what the original machine-readable provenance establishes.
+
+The repository therefore reports what was measured, what was predicted, what reproduces computationally, what changes across runs, what the experimenter reports about controllability, and which causal questions remain open.
 
 ---
 
