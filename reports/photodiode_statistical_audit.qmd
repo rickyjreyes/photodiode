@@ -39,9 +39,10 @@ show <- function(df, n = 30) {
 # 1. Executive summary
 
 This audit re-implements, in R, the analysis behind the repository's claim of an
-"optically induced harmonic state" in a silicon photodiode, and stress-tests it
-against ordinary explanations (60 Hz mains pickup, instrument artifacts,
-spectral leakage, peak-selection, and analysis-window choices).
+"optically induced harmonic state" in a silicon photodiode, and stress-tests the
+measurement against alternative signal origins and analysis artifacts, including
+60 Hz-related electrical/environmental coupling, instrument effects, spectral
+leakage, peak-selection, and analysis-window choices.
 
 **Potentially supported by the data:**
 
@@ -52,19 +53,25 @@ spectral leakage, peak-selection, and analysis-window choices).
 - Particular **2:3:4 frequency ratios** occur among the detected peaks.
 - The log-cos scan-max **exceeds the canonical shuffle null** (p at the Monte
   Carlo resolution floor).
+- The archived runs are **condition-dependent rather than uniformly locked**:
+  not every recorded run contains the same harmonic state. This is relevant to
+  source attribution, but the runs are not yet a complete matched-control set.
 
 **NOT established by the available data:**
 
-- That optical induction *caused* the structure.
-- That the ladder is *not* mains pickup — the baseline run is itself
-  6/6 mains-coincident, and **no raw control captures exist**.
-- That the two exact Q = 2/3 triplets are *independent* — both lie on the 60 Hz
-  ladder and **share the 240 Hz peak**; the geometry is an **arithmetic
-  consequence**, not independent evidence.
-- That the shuffle p-value is valid against **colored-noise or mains-harmonic**
-  alternatives.
-- Any claim of **persistence** beyond the 0.5 s capture, a **resonator quality
-  factor**, or confirmation of WCT.
+- That optical induction uniquely caused the structure.
+- That any specific environmental, conducted, magnetic, grounding, or
+  instrument-coupling mechanism caused the structure. The 60 Hz spacing means
+  such mechanisms remain important alternatives, but frequency coincidence
+  alone does not identify the source.
+- That the two exact Q = 2/3 triplets are statistically independent — both lie
+  on the 60 Hz ladder and **share the 240 Hz peak**; the geometry is an
+  **arithmetic consequence**, not independent statistical evidence.
+- That the shuffle p-value alone is sufficient for physical source attribution;
+  colored-noise and structured harmonic-ladder nulls answer different
+  statistical questions.
+- Any claim of **persistence** beyond the canonical 0.5 s capture, a **resonator
+  quality factor**, or confirmation of WCT.
 
 ```{r}
 show(rd("final_claim_matrix.csv"))
@@ -72,10 +79,11 @@ show(rd("final_claim_matrix.csv"))
 
 # 2. Experimental claim and alternatives
 
-The scientific question: *does the post-excitation waveform contain a
-reproducible induced device state distinguishable from mains pickup, EM
-coupling, instrument artifacts, leakage, peak-selection, and window choices?*
-The central alternative is ordinary 60 Hz mains / environmental pickup.
+The scientific question is whether the post-excitation waveform contains a
+reproducible condition-dependent device state distinguishable from conducted,
+magnetic, environmental, grounding, and instrument coupling, as well as from
+spectral leakage, peak-selection, and analysis-window effects. No single
+alternative mechanism is treated as established from the present archive.
 
 # 3. Capture inventory and prediction ledger
 
@@ -83,9 +91,16 @@ The central alternative is ordinary 60 Hz mains / environmental pickup.
 show(rd("capture_registry.csv"))
 ```
 
-**Data reality:** one raw post-excitation `.npy`, two–three raw CSV waveforms
-(post / undocumented phase), a baseline that exists **only as a peak table**,
-and **no raw control waveforms**.
+**Data reality:** one raw canonical post-excitation `.npy`, two–three raw CSV
+waveforms (post / undocumented phase), a baseline that exists **only as a peak
+table**, and an incomplete set of matched raw controls.
+
+The experimental history also included improvised electromagnetic shielding of
+the photodiode and a restart/repeat in which a delayed response was observed
+without entering the previously observed locked harmonic state. These are
+useful condition-dependence observations, but they are not substitutes for
+quantified matched controls and do not by themselves exclude conducted or
+low-frequency magnetic coupling.
 
 ```{r}
 fig("fig01_capture_flow.png")
@@ -129,16 +144,20 @@ Native FFT-bin spacing is **2 Hz** (0.5 s capture). Raw FFT amplitudes are not
 compared across windows without coherent-gain normalization; zero-padding is
 used for interpolation only, never as true resolution.
 
-# 7. Mains-harmonic hypothesis
+# 7. 60 Hz-related coupling alternative
 
 ```{r}
 show(rd("peak_estimates.csv"))
 fig("fig07_frequency_residuals.png")
 ```
 
-All ladder peaks sit on integer multiples of 60 Hz, and the baseline is already
-mains-coincident. This is **consistent with mains pickup**; control separation
-would be required to attribute the ladder to an induced state.
+The detected ladder falls on integer multiples of 60 Hz, and the baseline peak
+table also contains 60 Hz-coincident frequencies. This means mains-related or
+environmental coupling **cannot be excluded** from the present data. It does
+not establish mains pickup as the source. The archived behavior is
+condition-dependent, including runs without the same locked ladder, so source
+attribution requires matched raw controls rather than inference from frequency
+spacing alone.
 
 # 8. Harmonic ladder
 
@@ -175,10 +194,13 @@ show(rd("logcos_null_comparison.csv"))
 fig("fig12_logcos_nulls.png")
 ```
 
-The canonical shuffle null destroys frequency-local correlation. Block-permutation,
-stationary-bootstrap, colored-noise (AR), and mains-harmonic nulls are stronger
-and indicate whether the modulation is an expected byproduct of a finite
-harmonic ladder.
+The canonical shuffle null destroys frequency-local correlation. Block
+permutation, stationary bootstrap, colored-noise (AR), and synthetic
+harmonic-ladder nulls preserve different kinds of structure and test whether the
+observed log-cos statistic is unusual under those model classes. These tests do
+**not** identify the physical source of the measured waveform: statistical
+compatibility with a synthetic 60 Hz-harmonic model is not equivalent to a
+causal finding of mains pickup.
 
 # 12. Window and detrending sensitivity
 
@@ -196,8 +218,10 @@ fig("fig15_spectrogram.png")
 fig("fig16_harmonic_persistence.png")
 ```
 
-Persistence here means stability **within** the 0.5 s capture only. No claim is
-made about seconds, minutes, hours, or days.
+Persistence here means stability **within** the canonical 0.5 s capture only.
+The broader experimental history includes subsequent condition-dependent
+behavior, including a delayed response without harmonic lock, but those runs do
+not yet constitute a calibrated ringdown series.
 
 # 14. Experimental controls
 
@@ -206,8 +230,10 @@ show(rd("control_comparison.csv"))
 fig("fig17_control_matrix.png")
 ```
 
-Missing control categories are listed explicitly and shown as NA. The central
-causal claim is **NOT_TESTABLE_WITH_AVAILABLE_DATA**.
+Missing matched control categories are listed explicitly and shown as NA. The
+current archive is therefore insufficient to assign a unique physical cause to
+the locked spectrum. In particular, the data do not establish either "mains
+pickup" or "optically induced state" as a completed causal conclusion.
 
 # 15. Ringdown analysis
 
@@ -215,7 +241,8 @@ causal claim is **NOT_TESTABLE_WITH_AVAILABLE_DATA**.
 show(rd("ringdown_models.csv"))
 ```
 
-Not testable: no time-resolved post-excitation amplitude series.
+Not established from the canonical capture: no calibrated time-resolved
+post-excitation amplitude series suitable for a resonator-Q measurement.
 `Q_ratio` (2/3 geometry) is distinct from `Q_resonator = pi f tau`.
 
 # 16. Multiple-testing correction
@@ -261,9 +288,11 @@ fig("fig21_evidence_dashboard.png")
 
 # 21. Limitations
 
-- Single raw post-excitation capture; baseline is peak-table only.
-- No raw control waveforms (sham, disconnected, terminated, dark, channel-swap,
-  battery, multi-device/day).
+- Single raw canonical post-excitation capture; baseline is peak-table only.
+- Incomplete matched raw control set (sham, disconnected, terminated, dark,
+  channel-swap, battery, multi-device/day).
+- Improvised shielding and restart/repeat observations are informative but not
+  quantitatively calibrated isolation controls.
 - 2 Hz FFT resolution; exact frequencies rely on sub-bin estimates.
 - Stronger nulls and calibration run at development resolution unless invoked at
   full resolution.
