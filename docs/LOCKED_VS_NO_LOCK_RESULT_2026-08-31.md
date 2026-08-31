@@ -50,7 +50,13 @@ Accordingly, the result should be used as evidence of **state/condition dependen
 
 ## Experimental context annotation
 
-The experimenter reports that the photodiode session used improvised electromagnetic shielding (a makeshift Faraday enclosure), that the acquisition system was restarted, and that a subsequent repeat showed a delayed response without entering the earlier locked state. This context is recorded here as a **retrospective experimental annotation added on 2026-08-31**. It is not treated as preregistered metadata and is not used to relabel the archived `phase: unknown` field without an independent contemporaneous record.
+The experimenter reports that the photodiode session used improvised electromagnetic shielding (a makeshift Faraday enclosure), that the acquisition system was restarted, and that a subsequent repeat showed a delayed response without entering the earlier locked state.
+
+The experimenter further reports that the harmonic state can be turned **on and off with the photodiode** while the surrounding measurement setup is otherwise held fixed. This is important because it points to **diode dependence** of the state rather than a continuously present scope/background signal alone.
+
+These observations are recorded as **retrospective experimental annotations added on 2026-08-31**. They are not treated as preregistered metadata, and run `1773047118` is not silently relabeled as a formal diode-OFF control without an independent contemporaneous record tying that run to the switching operation.
+
+A dedicated discussion and predeclared replication protocol are provided in [`DIODE_DEPENDENCE_CONTROL_2026-08-31.md`](DIODE_DEPENDENCE_CONTROL_2026-08-31.md).
 
 ## Current interpretation
 
@@ -59,9 +65,13 @@ The strongest repository-supported interpretation is therefore:
 1. A pronounced locked harmonic state was recorded and is reproducible computationally from the committed waveform.
 2. A later retained raw capture does not contain that harmonic ladder.
 3. The locked structure is therefore **condition-dependent rather than continuously present across archived runs**.
-4. Its physical cause remains unresolved.
-5. Mains-related coupling remains an unexcluded alternative, but the 60 Hz spacing alone does not establish mains as the source.
+4. The experimenter reports direct **diode-dependent ON/OFF control** of the state under otherwise unchanged measurement conditions.
+5. The physical cause remains unresolved.
+6. Mains-related coupling remains an unexcluded possible drive or coupling mechanism, but the 60 Hz spacing alone does not establish mains as the source.
+7. Diode nonlinearity, rectification, impedance/capacitance changes, carrier trapping, or another diode-dependent state mechanism must now be separated experimentally from a more unusual interpretation.
 
 ## Next decisive controls
 
-Matched raw captures under identical acquisition settings remain the clean path to causal discrimination: disconnected/terminated input, sham excitation, battery isolation, channel swap, controlled shielding/grounding changes, mains phase/frequency monitoring, and independent device/day replication.
+The highest-value next test is a labeled or blinded **ABAB / randomized diode ON-OFF series** with identical acquisition settings and raw waveforms committed for every trial. That test directly estimates `P(lock | diode ON)` versus `P(lock | diode OFF)`.
+
+Additional matched controls remain useful: disconnected/terminated input, sham excitation, battery isolation, channel swap, controlled shielding/grounding changes, mains phase/frequency monitoring, and independent device/day replication.
