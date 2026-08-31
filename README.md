@@ -12,7 +12,7 @@ The central measured fact is this: the post-excitation waveform contains a discr
 
 All scripts are executable. All outputs are committed. The prediction ledger records what was expected before the capture.
 
-The physical origin of the locked harmonic state is **unresolved**. Its 60 Hz spacing means mains-related or environmental coupling must remain in the alternative set, but the spacing alone does not identify the source. The observed behavior has also been condition-dependent rather than continuously locked across recorded runs.
+The physical origin of the locked harmonic state is **unresolved**. Its 60 Hz spacing means mains-related or environmental coupling must remain in the alternative set, but the spacing alone does not identify the source. The archived runs also show that the high-amplitude harmonic lock is **condition-dependent rather than continuously present**.
 
 ---
 
@@ -25,6 +25,10 @@ scan_npy_logcos.py           — main analysis script (FFT → ratio → Koide �
 siglent.py / siglent_2.py    — oscilloscope capture scripts (Siglent SDS1104X HD)
 siglent_proof.py             — capture + analysis pipeline
 photodiode_proof.py          — induction protocol driver
+
+docs/
+  LOCKED_VS_NO_LOCK_RESULT_2026-08-31.md
+                              — archived state-switch evidence and limitations
 
 captures/
   20260309_010802/
@@ -140,11 +144,32 @@ The FFT of the captured waveform resolves discrete peaks at integer multiples of
 
 The ladder is 60 Hz-spaced throughout. This frequency coincidence makes 60 Hz-related electrical or environmental coupling an important control target, but **it is not a source attribution by itself**. The ratio and log-cos analyses are reproducible measurements of the artifact regardless of source.
 
-### Condition dependence
+### Archived locked vs no-lock contrast
 
-The experiment was not observed as a continuously present invariant harmonic ladder. The photodiode was operated with improvised electromagnetic shielding, the acquisition system was restarted, and a subsequent repeat showed a delayed response without entering the previously observed locked harmonic state. These observations are relevant because they show condition-dependent behavior rather than identical lock on every run.
+The repository contains a later retained raw capture in which the harmonic lock is absent under the same audit pipeline:
 
-They are not, by themselves, a complete isolation test: improvised shielding does not necessarily remove conducted coupling, grounding effects, or low-frequency magnetic fields. The appropriate conclusion is therefore that **mains-related coupling remains unexcluded, but is not established as the origin**.
+| Run | Archived phase | RMS voltage | 60 Hz amplitude | Detected harmonics | Ladder statistic | State |
+|---|---|---:|---:|---:|---:|---|
+| `1773046275` | post | 0.0763359644 | 63.3030966 | 12 | 286.8951175 | **LOCKED** |
+| `1773047118` | unknown | 0.0011999400 | 0.1081480 | 0 | 0 | **NO LOCK** |
+
+The epoch identifiers are separated by **843 seconds (~14.1 minutes)**. In the later capture, the 60 Hz amplitude is approximately **585× smaller**, the detected harmonic count falls from **12 to 0**, and the ladder statistic falls from **286.9 to 0**.
+
+This establishes a narrow but important result:
+
+> **The high-amplitude 60 Hz-spaced harmonic lock is not continuously present across the retained captures. A later raw capture has no detected harmonic ladder under the same audit pipeline.**
+
+This directly challenges a simplistic invariant-background model in which the full locked ladder is assumed to be continuously present in the measurement stream. It does **not** exclude intermittent or condition-dependent electrical, environmental, grounding, magnetic, or instrument coupling.
+
+The original archive labels run `1773047118` as `phase: unknown`, and its device metadata are incomplete. Therefore it is not silently relabeled as a matched post-excitation control.
+
+See [`docs/LOCKED_VS_NO_LOCK_RESULT_2026-08-31.md`](docs/LOCKED_VS_NO_LOCK_RESULT_2026-08-31.md) and [`tables_r/statistical_audit/locked_vs_no_lock_comparison.csv`](tables_r/statistical_audit/locked_vs_no_lock_comparison.csv) for the explicit result and machine-readable values.
+
+### Experimental context annotation
+
+The experimenter reports that the photodiode session used improvised electromagnetic shielding (a makeshift Faraday enclosure), that the acquisition system was restarted, and that a subsequent repeat showed a delayed response without entering the earlier locked state. This history is recorded as **retrospective experimental context**, not as preregistered metadata. The existing archive does not independently map every element of that recollection to run `1773047118`, so the repository-supported claim remains the locked/no-lock state contrast above.
+
+Improvised shielding also does not necessarily remove conducted coupling, grounding effects, or low-frequency magnetic fields. The appropriate conclusion is therefore that **mains-related coupling remains unexcluded, but is not established as the origin**.
 
 ---
 
@@ -284,9 +309,11 @@ Three directly or computationally reproducible structures are present in the can
 
 The ratio geometry is scale-free: the triplets (120, 180, 240) and (240, 360, 480) encode the same 2:3:4 integer structure at different absolute frequencies. Because both arise from the same 60 Hz harmonic ladder and share 240 Hz, the ratio geometry should be treated as a structural property of that ladder, not as independent statistical confirmations.
 
-The **physical source remains unresolved**. The 60 Hz spacing makes mains-related coupling a required alternative to test; it does not justify assigning the observation to mains. The shielding/restart/repeat history and the presence of runs without the same lock show condition dependence, but the archive does not yet contain the complete matched raw controls needed to choose uniquely between an induced device state and electrical/environmental/instrument alternatives.
+The **physical source remains unresolved**. The 60 Hz spacing makes mains-related coupling a required alternative to test; it does not justify assigning the observation to mains. Separately, the archived `1773046275` → `1773047118` comparison demonstrates that the full harmonic lock is not continuously present across retained raw captures. That state dependence is evidence against a simple invariant-background description, while still leaving intermittent or condition-dependent coupling mechanisms open.
 
-The repository therefore reports what was measured, what was predicted, what reproduces computationally, and which causal questions remain open.
+The shielding/restart/delayed-no-lock history is retained as retrospective experimental context and is not used to overstate what the original machine-readable provenance establishes.
+
+The repository therefore reports what was measured, what was predicted, what reproduces computationally, what changes across runs, and which causal questions remain open.
 
 ---
 
