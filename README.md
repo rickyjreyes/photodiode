@@ -8,9 +8,11 @@
 
 This repository is a self-contained reproducibility package for a captured electrical waveform from a silicon photodiode following a brief optical excitation protocol.
 
-The central measured fact is this: the post-excitation waveform contains a discrete 60 Hz-spaced harmonic ladder with exact Q = 2/3 ratio geometry across two independent triplets, and the log-frequency spectrum carries statistically significant cosine modulation (Δχ² = 21.139, p\_shuffle\_scanmax = 0.000999 over 1000 null trials).
+The central measured fact is this: the post-excitation waveform contains a discrete 60 Hz-spaced harmonic ladder with exact Q = 2/3 ratio geometry across two detected triplets, and the log-frequency spectrum carries a strong cosine modulation under the canonical shuffle analysis (Δχ² = 21.139, p_shuffle_scanmax = 0.000999 over 1000 null trials).
 
 All scripts are executable. All outputs are committed. The prediction ledger records what was expected before the capture.
+
+The physical origin of the locked harmonic state is **unresolved**. Its 60 Hz spacing means mains-related or environmental coupling must remain in the alternative set, but the spacing alone does not identify the source. The observed behavior has also been condition-dependent rather than continuously locked across recorded runs.
 
 ---
 
@@ -43,7 +45,7 @@ pic/                         — device and setup photographs
 | `summary.json` | All scalar results: peaks, ratio pairs, Koide triplets, log-cos best fit |
 | `top_peaks.csv` | Detected FFT peaks with frequency and amplitude |
 | `ratio_pairs.csv` | All detected peak pairs with ratio and δ from 2/3 |
-| `koide_triplets.csv` | All ordered triplets with Q\_low, Q\_high, Q\_mean, koide\_error |
+| `koide_triplets.csv` | All ordered triplets with Q_low, Q_high, Q_mean, koide_error |
 | `logcos_scan.csv` | Δχ² vs. k across the full scan range |
 | `logcos_null.csv` | Shuffle null distribution (1000 trials, scan-max statistic) |
 | `spectrum.png` | FFT amplitude spectrum |
@@ -126,7 +128,7 @@ python siglent_proof.py
 The FFT of the captured waveform resolves discrete peaks at integer multiples of 60 Hz:
 
 | Frequency (Hz) | Amplitude (arb.) | Rank by amplitude |
-|---|---|---|
+|---|---:|---:|
 | 60 | 60.43 | 3 |
 | 120 | 191.00 | 1 |
 | 180 | 39.13 | 5 |
@@ -136,7 +138,13 @@ The FFT of the captured waveform resolves discrete peaks at integer multiples of
 | 480 | 17.84 | 6 |
 | 600 | 13.94 | 8 |
 
-The ladder is 60 Hz-spaced throughout. Because 60 Hz harmonics can arise from mains or environmental pickup, controls are essential to interpret the origin of this structure (see [Controls and Falsification](#controls-and-falsification)). The ratio and log-cos analyses are reproducible measurements of the artifact regardless of source.
+The ladder is 60 Hz-spaced throughout. This frequency coincidence makes 60 Hz-related electrical or environmental coupling an important control target, but **it is not a source attribution by itself**. The ratio and log-cos analyses are reproducible measurements of the artifact regardless of source.
+
+### Condition dependence
+
+The experiment was not observed as a continuously present invariant harmonic ladder. The photodiode was operated with improvised electromagnetic shielding, the acquisition system was restarted, and a subsequent repeat showed a delayed response without entering the previously observed locked harmonic state. These observations are relevant because they show condition-dependent behavior rather than identical lock on every run.
+
+They are not, by themselves, a complete isolation test: improvised shielding does not necessarily remove conducted coupling, grounding effects, or low-frequency magnetic fields. The appropriate conclusion is therefore that **mains-related coupling remains unexcluded, but is not established as the origin**.
 
 ---
 
@@ -161,14 +169,14 @@ Q_high = f₃ / (2 f₂)
 Q_mean = (Q_low + Q_high) / 2
 ```
 
-Two triplets satisfy Q\_low = Q\_high = 2/3 exactly:
+Two triplets satisfy Q_low = Q_high = 2/3 exactly:
 
-| Triplet (Hz) | Q\_low | Q\_high | Q\_mean | koide\_error |
-|---|---|---|---|---|
+| Triplet (Hz) | Q_low | Q_high | Q_mean | koide_error |
+|---|---:|---:|---:|---:|
 | (120, 180, 240) | 2/3 | 2/3 | 2/3 | 0.0 |
 | (240, 360, 480) | 2/3 | 2/3 | 2/3 | 0.0 |
 
-Both triplets reduce to the integer ratio 2:3:4. The same sideband geometry appears at two independent frequency scales in the same capture.
+Both triplets reduce to the integer ratio 2:3:4. They occur at two frequency scales in the same capture and share the 240 Hz peak, so they should not be treated as statistically independent observations.
 
 This is called **Q = 2/3 sideband geometry** throughout this repository. It is a statement about the dimensionless ratio structure of the measured frequency spectrum, not a claim about particle masses or the Koide formula for leptons. The shared diagnostic form is noted because it provides a compact, exact three-frequency locking condition.
 
@@ -196,13 +204,13 @@ The scan searches k ∈ [0.5, 80] at 4000 steps, fitting by least squares at eac
 Δχ² = χ²_null − χ²_logcos
 ```
 
-where χ²\_null is the variance-normalized residual of the constant-only fit.
+where χ²_null is the variance-normalized residual of the constant-only fit.
 
 ### Null test
 
-The significance of the scan maximum is assessed against a shuffle null: the FFT amplitudes are permuted 1000 times, the full k-scan is repeated on each shuffled spectrum, and the scan-max Δχ² is recorded. The reported p-value is the fraction of shuffled trials whose scan-max exceeded the real scan-max.
+The canonical significance diagnostic shuffles the FFT amplitudes 1000 times, repeats the full k-scan on each shuffled spectrum, and records the scan-max Δχ². The reported p-value is the add-one empirical fraction of shuffled trials whose scan maximum meets or exceeds the observed value.
 
-This is a **scan-max shuffle null** — it accounts for the look-elsewhere effect across the full tested k range.
+This is a **scan-max shuffle null**: it accounts for the look-elsewhere effect across the tested k range. It does not preserve every possible colored-noise or frequency-local correlation and therefore should not be interpreted as a complete physical source test.
 
 ### Observed result
 
@@ -216,9 +224,11 @@ Null trials        =  1000
 p_shuffle_scanmax  =  0.000999   (1/1001 — resolution floor of this run)
 ```
 
-No shuffled spectrum exceeded the real scan statistic in this run.
+No shuffled spectrum exceeded the real scan statistic in this canonical run.
 
-The p-value of 0.000999 is the measured scan-max shuffle result for this run and this analysis window. It is not a Gaussian sigma conversion and should not be generalized beyond the tested k range and sample.
+The p-value of 0.000999 is the measured scan-max shuffle result for this run and this analysis window. It is not a Gaussian sigma conversion and should not be generalized beyond the tested statistic, range, and sample.
+
+Structured colored-noise and harmonic-ladder nulls included in the statistical audit test different model classes. Compatibility with a synthetic 60 Hz-harmonic null means that the log-cos statistic alone cannot distinguish that model class; it does **not** establish that physical mains pickup generated the recorded waveform.
 
 ---
 
@@ -235,13 +245,15 @@ The ledger was written before the canonical capture and specifies:
 - the expected ratio geometry,
 - the falsification conditions.
 
-The ledger establishes that the reported structure was predicted, not reconstructed after the fact. The baseline run (epoch 1773046194) captures a virgin device prior to excitation and is included in `proof_runs/` for direct comparison against the post-excitation artifact.
+The ledger establishes chronology: the reported target structure was specified before the canonical capture rather than reconstructed afterward. It does not substitute for physical controls.
+
+The baseline run (epoch 1773046194) is included in `proof_runs/` for comparison, although its archived form is not a matched raw waveform under the same normalization as the canonical `.npy` capture.
 
 ---
 
 ## Controls and Falsification
 
-The following controls are necessary to distinguish an induced device state from ordinary environmental pickup or instrument artifact. They are the direct falsification tests for the central claim.
+The following controls are the direct path to distinguishing a condition-dependent device state from environmental, conducted, magnetic, grounding, or instrument coupling.
 
 | Control | What it tests |
 |---|---|
@@ -250,33 +262,31 @@ The following controls are necessary to distinguish an induced device state from
 | Disconnected input / terminated channel | Is the structure present in the measurement chain alone? |
 | Dark enclosure, no optical path | Is ambient light driving the observation? |
 | Scope channel swap | Is the signal channel-specific or instrument-wide? |
-| Battery-powered or preamplifier-isolated supply | Does mains coupling in the supply account for the 60 Hz ladder? |
-| Shielding and grounding variation | Does the structure track environmental EM conditions? |
+| Battery-powered or preamplifier-isolated supply | Does conducted supply coupling account for the ladder? |
+| Shielding and grounding variation | Does the structure track environmental EM or grounding conditions? |
+| Mains-frequency monitor | Does the observed frequency/phase track the local power waveform? |
 | Repeat captures across devices and days | Is the effect reproducible across hardware instances and time? |
 | Pre-declared parameter lock (fixed fmin, fmax, k range) | Are scan parameters chosen post-hoc to fit the result? |
 
-The central claim is **falsified** if:
+The induced-state interpretation would be strongly challenged if matched virgin, disconnected, or terminated-input controls reproducibly generate the same locked spectrum under identical acquisition conditions. Conversely, repeatable protocol-specific locking with flat measurement-chain controls would substantially weaken simple background explanations.
 
-- virgin devices (excitation omitted) produce identical spectral structure under blinded comparison,
-- the structure vanishes immediately after excitation ceases,
-- the Q = 2/3 triplets do not recur in independent captures under identical protocol,
-- disconnected-channel or terminated-input controls reproduce the full harmonic ladder.
-
-All control runs should be processed through the same `scan_npy_logcos.py` pipeline and committed alongside the primary artifact so outputs are directly comparable.
+All matched control runs should be processed through the same `scan_npy_logcos.py` pipeline and committed alongside the primary artifact so outputs are directly comparable.
 
 ---
 
 ## Interpretation
 
-Three independently computable structures are present in the artifact:
+Three directly or computationally reproducible structures are present in the canonical artifact:
 
-1. **A 60 Hz-spaced discrete harmonic ladder** across at least 8 resolved peaks.
-2. **Exact Q = 2/3 sideband geometry** in two non-overlapping triplets at different frequency scales.
-3. **Statistically significant log-cos modulation** in ln(f) with p\_shuffle\_scanmax at the 1/1001 floor over 1000 trials.
+1. **A 60 Hz-spaced discrete harmonic ladder** across multiple resolved peaks.
+2. **Exact Q = 2/3 sideband geometry** in two detected 2:3:4 triplets.
+3. **A strong log-cos scan maximum** in ln(f), with the canonical shuffle analysis reaching its 1/1001 Monte Carlo floor.
 
-The ratio geometry is scale-free: both triplets (120, 180, 240) and (240, 360, 480) encode the same 2:3:4 integer structure at different absolute frequencies. The spectral structure is therefore not a single-frequency artifact but a geometric relationship preserved across scales within the same capture.
+The ratio geometry is scale-free: the triplets (120, 180, 240) and (240, 360, 480) encode the same 2:3:4 integer structure at different absolute frequencies. Because both arise from the same 60 Hz harmonic ladder and share 240 Hz, the ratio geometry should be treated as a structural property of that ladder, not as independent statistical confirmations.
 
-Whether this structure reflects an optically induced device state or a reproducible environmental/pickup pattern is the open experimental question. The controls listed above are the direct path to resolving it. This repository provides the baseline artifact, the canonical analysis outputs, and the pipeline against which all control runs are to be compared.
+The **physical source remains unresolved**. The 60 Hz spacing makes mains-related coupling a required alternative to test; it does not justify assigning the observation to mains. The shielding/restart/repeat history and the presence of runs without the same lock show condition dependence, but the archive does not yet contain the complete matched raw controls needed to choose uniquely between an induced device state and electrical/environmental/instrument alternatives.
+
+The repository therefore reports what was measured, what was predicted, what reproduces computationally, and which causal questions remain open.
 
 ---
 
