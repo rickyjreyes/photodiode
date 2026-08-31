@@ -1,0 +1,3 @@
+run_id,archived_phase,rms_voltage,amp_60Hz,n_harmonics,ladder_statistic,epoch_delta_from_locked_s,state,provenance_note
+1773046275,post,0.0763359643680486,63.3030965941166,12,286.895117464796,0,LOCKED,"post-excitation harmonic run"
+1773047118,unknown,0.00119993999849992,0.108148015647861,0,0,843,NO_LOCK,"later low-amplitude raw run; phase/device metadata incomplete"
