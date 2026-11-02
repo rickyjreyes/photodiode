@@ -1,0 +1,51 @@
+name: Lean protocol certification
+
+on:
+  push:
+    paths:
+      - 'formal/**'
+      - '.github/workflows/lean-protocol.yml'
+  pull_request:
+    paths:
+      - 'formal/**'
+      - '.github/workflows/lean-protocol.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: formal
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject placeholders and local axioms
+        run: |
+          if grep -REn '(^|[[:space:]])(sorry|admit|axiom)([[:space:]]|$)' PhotodiodeProtocol PhotodiodeProtocol.lean; then
+            echo "Rejected placeholder or axiom"; exit 1
+          fi
+      - name: Install elan
+        run: |
+          curl --proto '=https' --tlsv1.2 -fLsS --retry 5 --retry-all-errors \
+            https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o /tmp/elan-init.sh
+          sh /tmp/elan-init.sh -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+      - name: Build
+        run: lake build
+      - name: Axiom audit
+        run: |
+          cat > /tmp/axioms.lean <<'LEAN'
+          import PhotodiodeProtocol
+          #print axioms PhotodiodeProtocol.randomization_level
+          #print axioms PhotodiodeProtocol.exchangeable_level
+          #print axioms PhotodiodeProtocol.Decision.pass_level
+          LEAN
+          lake env lean /tmp/axioms.lean | tee /tmp/axioms.out
+          if grep -v 'propext, Classical.choice, Quot.sound' /tmp/axioms.out | grep -q 'depends on axioms'; then
+            echo "Unexpected axiom"; exit 1
+          fi
