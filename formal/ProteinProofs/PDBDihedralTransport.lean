@@ -63,7 +63,18 @@ theorem cross3_self (v : Point3) : cross3 v v = 0 := by
 a value, but the nondegenerate geometric-normal conditions fail. -/
 theorem constant_chain_invalid {n : ℕ} (v : Point3) (i j k l : Fin n) :
     ¬ validNormals (fun _ => v) i j k l := by
-  simp [validNormals, difference, cross3]
+  intro h
+  have hfirst : difference (fun _ : Fin n => v) j i = (0 : Point3) := by
+    funext a
+    simp [difference]
+  have hsecond : difference (fun _ : Fin n => v) k j = (0 : Point3) := by
+    funext a
+    simp [difference]
+  have hnormal : cross3 (difference (fun _ : Fin n => v) j i)
+      (difference (fun _ : Fin n => v) k j) = 0 := by
+    rw [hfirst, hsecond]
+    exact cross3_self 0
+  exact h.1 hnormal
 
 /-- Circular angular distance applied to a remainder r in [0,period). -/
 def circularDistance (period r : ℝ) : ℝ :=
