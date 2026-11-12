@@ -30,19 +30,19 @@ def spectral11 (a b c d : ℝ) : ℝ := (fft11 a b c d) ^ 2
 def energy (a b c d : ℝ) : ℝ := a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2
 
 /-- Inverse FFT of the four power-spectrum coefficients at lag (0,0). -/
-def invPower00 (a b c d : ℝ) : ℝ :=
+noncomputable def invPower00 (a b c d : ℝ) : ℝ :=
   (spectral00 a b c d + spectral01 a b c d +
     spectral10 a b c d + spectral11 a b c d) / 4
 
-def invPower01 (a b c d : ℝ) : ℝ :=
+noncomputable def invPower01 (a b c d : ℝ) : ℝ :=
   (spectral00 a b c d - spectral01 a b c d +
     spectral10 a b c d - spectral11 a b c d) / 4
 
-def invPower10 (a b c d : ℝ) : ℝ :=
+noncomputable def invPower10 (a b c d : ℝ) : ℝ :=
   (spectral00 a b c d + spectral01 a b c d -
     spectral10 a b c d - spectral11 a b c d) / 4
 
-def invPower11 (a b c d : ℝ) : ℝ :=
+noncomputable def invPower11 (a b c d : ℝ) : ℝ :=
   (spectral00 a b c d - spectral01 a b c d -
     spectral10 a b c d + spectral11 a b c d) / 4
 
