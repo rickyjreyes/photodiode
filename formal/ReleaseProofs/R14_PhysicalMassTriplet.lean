@@ -72,7 +72,6 @@ theorem koideMass_inv_cosSquared (m1 m2 m3 : ℝ)
       1 / (3 * massCosSquared m1 m2 m3) := by
   unfold koideMass massCosSquared
   field_simp [hroot, hmass]
-  ring
 
 /-- The all-zero mass vector is outside the meaningful angular domain. -/
 theorem koideMass_zero : koideMass 0 0 0 = 0 := by
