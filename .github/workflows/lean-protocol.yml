@@ -44,8 +44,25 @@ jobs:
           #print axioms PhotodiodeProtocol.randomization_level
           #print axioms PhotodiodeProtocol.exchangeable_level
           #print axioms PhotodiodeProtocol.Decision.pass_level
+          #print axioms PhotodiodeProtocol.HarmonicLadder.harmonic_ladder_not_log_uniform
+          #print axioms PhotodiodeProtocol.HarmonicLadder.binTriplet_exact_two_thirds_iff
+          #print axioms PhotodiodeProtocol.HarmonicLadder.nearest_bin_not_harmonic
+          #print axioms PhotodiodeProtocol.HarmonicLadder.approx_two_thirds_bound
+          #print axioms PhotodiodeProtocol.HarmonicLadder.logCosRSS_unit_change
+          #print axioms PhotodiodeProtocol.ScanMax.selected_pValue_le_scan
+          #print axioms PhotodiodeProtocol.ScanMax.scanMax_randomization_level
+          #print axioms PhotodiodeProtocol.ScanMax.minP_inflation
+          #print axioms PhotodiodeProtocol.ScanMax.not_exchangeable_of_strict_order
           LEAN
           lake env lean /tmp/axioms.lean | tee /tmp/axioms.out
-          if grep -v 'propext, Classical.choice, Quot.sound' /tmp/axioms.out | grep -q 'depends on axioms'; then
-            echo "Unexpected axiom"; exit 1
-          fi
+          python3 - <<'PY'
+          import re
+          text = open('/tmp/axioms.out').read()
+          allowed = {'propext', 'Classical.choice', 'Quot.sound'}
+          blocks = re.findall(r"depends on axioms: \[([^\]]*)\]", text, re.S)
+          assert blocks, 'no axiom report parsed'
+          bad = [a for b in blocks for a in (x.strip() for x in b.split(',')) if a and a not in allowed]
+          if bad or 'sorryAx' in text:
+              raise SystemExit(f'Unexpected axioms: {bad}')
+          print(f'{len(blocks)} declarations audited: standard axioms only')
+          PY
