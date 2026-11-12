@@ -6,3 +6,4 @@ import ProteinProofs.RigidTranslationNullDerivative
 import ProteinProofs.DimensionalTransportCounterexample
 import ReleaseProofs.R14_Koide
 import ReleaseProofs.R14_PhysicalMassTriplet
+import ProteinProofs.PDBDihedralTransport
