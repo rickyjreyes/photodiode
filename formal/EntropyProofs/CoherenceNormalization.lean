@@ -16,7 +16,7 @@ namespace EntropyProofs.CoherenceNormalization
 open EntropyProofs.DiscreteAutocorrelationParseval
 
 /-- The index rearrangement performed by np.fft.fftshift for the 2×2 case. -/
-def shifted (a b c d : ℝ) (i j : Fin 2) : ℝ :=
+noncomputable def shifted (a b c d : ℝ) (i j : Fin 2) : ℝ :=
   if i = 0 then
     if j = 0 then invPower11 a b c d else invPower10 a b c d
   else
