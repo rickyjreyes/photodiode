@@ -2,3 +2,5 @@ import PhotodiodeProtocol.Randomization
 import PhotodiodeProtocol.Spectral
 import PhotodiodeProtocol.Decision
 import PhotodiodeProtocol.HarmonicRatios
+import PhotodiodeProtocol.HarmonicLadder
+import PhotodiodeProtocol.ScanMax

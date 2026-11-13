@@ -4,12 +4,14 @@ on:
     paths:
       - 'formal/**'
       - 'tests/test_harmonic_ratio_contracts.py'
+      - 'tests/test_harmonic_ladder_scanmax_contracts.py'
       - 'scan_npy_logcos.py'
       - '.github/workflows/harmonic-ratio-contracts.yml'
   pull_request:
     paths:
       - 'formal/**'
       - 'tests/test_harmonic_ratio_contracts.py'
+      - 'tests/test_harmonic_ladder_scanmax_contracts.py'
       - 'scan_npy_logcos.py'
       - '.github/workflows/harmonic-ratio-contracts.yml'
   workflow_dispatch:
@@ -26,4 +28,4 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m pip install -r requirements.txt
-      - run: python -m unittest discover -s tests -p 'test_harmonic_ratio_contracts.py' -v
+      - run: python -m unittest discover -s tests -p 'test_harmonic_*contracts.py' -v
