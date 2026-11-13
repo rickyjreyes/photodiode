@@ -49,3 +49,19 @@ Status vocabulary: **PROVED** (kernel-checked), **REFUTED** (kernel-checked coun
   (and is generally false for correlated neighbouring bins); the device-level randomization test in
   `Decision.lean` is the primary inferential route.
 * The Lean model of `rfft` is exact-real; floating-point agreement with NumPy is tested, not proved.
+
+
+## Additional source-conformance checks after PR #8 initial build
+
+`tests/test_harmonic_scan_exact_orbit.py` adds a full finite-orbit
+enumeration of scan maxima over a predeclared frequency grid using the
+real `scan_logcos_cpu` function, including the finite-sample
+superuniformity inequality for a synthetic uniformly sampled orbit.
+It also pins the two-test min-p familywise failure, a strictly ordered
+nonexchangeable null, and the one-sided Nyquist convention for odd/even N.
+
+**These added tests require a fresh local run.** The previously reported
+7,222-job Lean build applies to the unchanged theorem modules only; it
+does not establish empirical exchangeability or the correctness of a
+device-level randomization schedule. This issue remains review-open
+until source/test evidence is accepted.
